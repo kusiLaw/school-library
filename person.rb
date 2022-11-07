@@ -10,21 +10,10 @@ class Person
   end
 
   def of_age?
-    if @age >= 18
-      true
-    else
-      false
-    end
+    @age >= 18
   end
 
   def can_use_services?
-    if of_age? && @parent_permission
-      true
-    else
-      false
-    end
+    of_age? && @parent_permission
   end
 end
-
-p = Person.new(11, 'law')
-puts p.of_age?, p.can_use_services?
