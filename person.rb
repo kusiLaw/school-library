@@ -1,5 +1,5 @@
 require './nameable'
-require './decorator'
+require './rentals'
 
 class Person < Nameable
   attr_accessor :name, :age
@@ -22,16 +22,13 @@ class Person < Nameable
     @name
   end
 
+  def add_rental(book, date)
+    @rentals.push(Rentals.new(date, book, self))
+  end
+
   private
 
   def of_age?
     @age >= 18
   end
 end
-
-person = Person.new(22, 'maximilianus')
-person.correct_name
-capitalized_person = CapitalizeDecorator.new(person)
-capitalized_person.correct_name
-capitalized_trimmed_person = TrimmerDecorator.new(capitalized_person)
-capitalized_trimmed_person.correct_name
