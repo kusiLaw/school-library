@@ -1,10 +1,4 @@
 require './app'
-# class Main
-#   def initialize(choice = 0)
-#     @choice = choice
-#     @app = App.new
-#     welcome
-#   end
 
 def welcome
   app = App.new

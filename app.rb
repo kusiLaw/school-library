@@ -13,20 +13,22 @@ class App
     @terminate = false
   end
 
-  def entry(choice)
+  def entry(choice) # rubocop:disable Metrics/CyclomaticComplexity
     case choice
     when '1'
       list_all_book
+    when '2'
+      list_all_people
     when '3'
-      puts 'Do you want to create a student(1) or a teacher (2) for teacher' \
-           '[input a number]'
-      gets.chomp == '1' ? create_student : create_teacher
+      create_person
     when '4'
       create_book
+    when '5'
+      create_rent
+    when '6'
+      list_rental
     when '7'
       @terminate = true
-    else
-      'Enter valid value. either 1 or 2'
     end
   end
 
@@ -40,17 +42,14 @@ class App
     @cache[:book] = [*@cache[:book], Book.new(title, author)]
   end
 
-  def list_all_book
-    # @cache[:book].each do |item|
-    #   puts item.
-    # end
-  end
-
-  def list_all_people
-    # people = @cache[:student] +  @cache[:teacher]
-    # people.each do |item|
-    #  puts item
-    # end
+  def list_all_book(with_index = false) # rubocop:disable Style/OptionalBooleanParameter
+    @cache[:book]&.each_with_index do |item, i|
+      if with_index
+        puts "(#{i}) Title: #{item.title} Author: #{item.author} "
+      else
+        puts "Title: #{item.title} Author: #{item.author} "
+      end
+    end
   end
 
   def create_student
@@ -60,7 +59,7 @@ class App
     age = gets.chomp
     puts 'Parent permission?[y/n]'
     permission = gets.chomp
-    @cache[:student] = [*@cache[:student], Student.new(age, '', name, permission.upcase == 'Y')]
+    @cache[:people] = [*@cache[:people], Student.new(age, '', name, permission.upcase == 'Y')]
   end
 
   def create_teacher
@@ -70,24 +69,55 @@ class App
     age = gets.chomp
     puts 'Specialization?'
     specialization = gets.chomp
-    @cache[:teacher] = [*@cache[:teacher], Teacher.new(age, specialization, name)]
+    @cache[:people] = [*@cache[:people], Teacher.new(age, specialization, name)]
   end
 
-  def create_person(person_type = 1)
-    case person_type
-    when 1 # student
+  def create_person
+    puts 'Do you want to create a student(1) or a teacher (2) for teacher' \
+         '[input a number]'
+    gets.chomp == '1' ? create_student : create_teacher
+  end
 
-      @cache[:student] = [*@cache[:student], Student.new(age, '', name, permission)]
-    when 2 # teacher
-      puts 'Name?'
-      name = gets.chomp
-      puts 'Age?'
-      age = gets.chomp
-      puts 'Specialization?'
-      specialization = gets.chomp
-      @cache[:teacher] = [*@cache[:teacher], Teacher.new(age, specialization, name)]
-    else
-      'Enter valid value. either 1 or 2'
+  def list_all_people(with_index = false) # rubocop:disable Style/OptionalBooleanParameter
+    @cache[:people]&.each_with_index do |item, i|
+      if with_index
+        puts "(#{i})[#{item.class.name}] Name: #{item.name} ID: #{item.id} Age: #{item.age}"
+      else
+        puts "[#{item.class.name}] Name: #{item.name} ID: #{item.id} Age: #{item.age}"
+      end
     end
+  end
+
+  def create_rent
+    puts 'Select a book from a following list by number'
+    list_all_book(true)
+    book_index = gets.chomp
+    puts 'Select a person from the following list by number(not id)'
+    list_all_people(true)
+    person_index = gets.chomp
+    puts 'Date'
+    date = gets.chomp
+    begin
+      person = @cache[:people][book_index.to_i]
+      book = @cache[:book][person_index.to_i]
+      p person
+      @cache[:rental] = [*@cache[:rental], Rentals.new(date, book, person)]
+    rescue StandardError => e
+      puts "incorrect value #{e}"
+    end
+  end
+
+  def list_rental
+    puts 'ID of the person'
+    id = gets.chomp
+    @cache[:rental]&.each do |item|
+      # puts "[#{item.class.name}] Name: #{item.name} ID: #{item.id} Age: #{item.age}"
+      p item.person.id
+      puts "Date: #{item.date}, Book \"#{item.book.title}\" by #{item.book.author}" if item.person.id == id
+    end
+    # @cache[:people]&.each_with_index do |item, _i|
+    #   if item.id == id
+    #    item.rental&.
+    # end
   end
 end
