@@ -3,8 +3,8 @@ require './person'
 class Teacher < Person
   attr_accessor :specialization
 
-  def initialize(age, specialization, name = 'Unkown', parent_permission = true) # rubocop:disable Style/OptionalBooleanParameter
-    super(age, name, parent_permission)
+  def initialize(age, specialization, name = 'Unkown')
+    super(age, name)
     @specialization = specialization
   end
 
