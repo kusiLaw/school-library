@@ -29,6 +29,7 @@ class App
       list_rental
     when '7'
       @terminate = true
+
     end
   end
 
@@ -100,7 +101,6 @@ class App
     begin
       person = @cache[:people][book_index.to_i]
       book = @cache[:book][person_index.to_i]
-      p person
       @cache[:rental] = [*@cache[:rental], Rentals.new(date, book, person)]
     rescue StandardError => e
       puts "incorrect value #{e}"
@@ -110,14 +110,9 @@ class App
   def list_rental
     puts 'ID of the person'
     id = gets.chomp
+    puts 'Rentals: '
     @cache[:rental]&.each do |item|
-      # puts "[#{item.class.name}] Name: #{item.name} ID: #{item.id} Age: #{item.age}"
-      p item.person.id
-      puts "Date: #{item.date}, Book \"#{item.book.title}\" by #{item.book.author}" if item.person.id == id
+      puts "Date: #{item.date}, Book \"#{item.book.title}\" by #{item.book.author}" if item.person.id.to_i == id.to_i
     end
-    # @cache[:people]&.each_with_index do |item, _i|
-    #   if item.id == id
-    #    item.rental&.
-    # end
   end
 end

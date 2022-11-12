@@ -1,6 +1,6 @@
 require './app'
 
-def welcome
+def welcome_commands
   app = App.new
   until app.terminate
     puts 'Please choose an option by entering a number:'
@@ -14,10 +14,11 @@ def welcome
     choice = gets.chomp
     app.entry(choice)
   end
+  puts 'Thank you for using this app!'
 end
 
 def main
-  welcome
+  welcome_commands
 end
 
 main
