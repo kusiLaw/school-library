@@ -1,6 +1,6 @@
 require './person'
 
-class Student < Person
+class Student 
   attr_accessor :classroom
 
   def initialize(age, classroom, name = 'Unkown', parent_permission = true) # rubocop:disable Style/OptionalBooleanParameter
