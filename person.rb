@@ -2,8 +2,8 @@ require './nameable'
 require './rentals'
 
 class Person < Nameable
-  attr_accessor :name, :age
-  attr_reader :id, :rentals
+  attr_accessor :name, :age, :rentals
+  attr_reader :id
 
   def initialize(age, name = 'Unkown', parent_permission = true) # rubocop:disable Style/OptionalBooleanParameter
     @id = Random.rand(1..1000)
