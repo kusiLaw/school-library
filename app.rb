@@ -4,8 +4,11 @@ require './book'
 require './rentals'
 require './person'
 require './teacher'
+require './list_module'
 
 class App
+  include List
+
   attr_accessor :cache, :terminate
 
   def initialize
@@ -13,7 +16,7 @@ class App
     @terminate = false
   end
 
-  def entry(choice) # rubocop:disable Metrics/CyclomaticComplexity
+  def entry(choice)
     case choice
     when '1'
       list_all_book
@@ -27,9 +30,6 @@ class App
       create_rent
     when '6'
       list_rental
-    when '7'
-      @terminate = true
-
     end
   end
 
@@ -41,16 +41,6 @@ class App
     puts 'author'
     author = gets.chomp
     @cache[:book] = [*@cache[:book], Book.new(title, author)]
-  end
-
-  def list_all_book(with_index = false) # rubocop:disable Style/OptionalBooleanParameter
-    @cache[:book]&.each_with_index do |item, i|
-      if with_index
-        puts "(#{i}) Title: #{item.title} Author: #{item.author} "
-      else
-        puts "Title: #{item.title} Author: #{item.author} "
-      end
-    end
   end
 
   def create_student
@@ -79,16 +69,6 @@ class App
     gets.chomp == '1' ? create_student : create_teacher
   end
 
-  def list_all_people(with_index = false) # rubocop:disable Style/OptionalBooleanParameter
-    @cache[:people]&.each_with_index do |item, i|
-      if with_index
-        puts "(#{i})[#{item.class.name}] Name: #{item.name} ID: #{item.id} Age: #{item.age}"
-      else
-        puts "[#{item.class.name}] Name: #{item.name} ID: #{item.id} Age: #{item.age}"
-      end
-    end
-  end
-
   def create_rent
     puts 'Select a book from a following list by number'
     list_all_book(true)
@@ -104,15 +84,6 @@ class App
       @cache[:rental] = [*@cache[:rental], Rentals.new(date, book, person)]
     rescue StandardError => e
       puts "incorrect value #{e}"
-    end
-  end
-
-  def list_rental
-    puts 'ID of the person'
-    id = gets.chomp
-    puts 'Rentals: '
-    @cache[:rental]&.each do |item|
-      puts "Date: #{item.date}, Book \"#{item.book.title}\" by #{item.book.author}" if item.person.id.to_i == id.to_i
     end
   end
 end
