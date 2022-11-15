@@ -6,15 +6,21 @@ require './person'
 require './teacher'
 require './list_module'
 require './create_module'
+require './storage_module'
 
 class App
   include List
   include Create
+  include Storage
 
   attr_accessor :cache, :terminate
 
   def initialize
-    @cache = {}
+    @cache = {
+      book: import_books,
+      people: import_people,
+      rental: import_rentals
+    }
     @terminate = false
   end
 

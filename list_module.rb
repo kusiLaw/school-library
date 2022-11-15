@@ -21,6 +21,7 @@ module List
 
   def list_rental
     puts 'ID of the person'
+    list_all_people(false)
     id = gets.chomp
     puts 'Rentals: '
     @cache[:rental]&.each do |item|

@@ -12,7 +12,10 @@ def main
     6 - list all rental for a given person id
     7 - Exit'
     choice = gets.chomp
-    app.terminate = true if choice == '7'
+    if choice == '7'
+      app.store_data
+      app.terminate = true
+    end
     app.entry(choice)
   end
   puts 'Thank you for using this app!'
