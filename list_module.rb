@@ -21,9 +21,11 @@ module List
 
   def list_rental
     puts 'ID of the person'
+    list_all_people(false)
     id = gets.chomp
     puts 'Rentals: '
-    @cache[:rental]&.each do |item|
+    i = @cache[:people].select { |person| person.id.to_i == id.to_i }
+    i[0].rentals&.each do |item|
       puts "Date: #{item.date}, Book \"#{item.book.title}\" by #{item.book.author}" if item.person.id.to_i == id.to_i
     end
   end

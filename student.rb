@@ -3,8 +3,8 @@ require './person'
 class Student < Person
   attr_accessor :classroom
 
-  def initialize(age, classroom, name = 'Unkown', parent_permission = true) # rubocop:disable Style/OptionalBooleanParameter
-    super(age, name, parent_permission)
+  def initialize(age, classroom, name = 'Unknown', parent_permission = true, id = -1) # rubocop:disable Style/OptionalBooleanParameter
+    super(age, name, parent_permission, id)
     @classroom = classroom
   end
 
