@@ -18,10 +18,10 @@ class App
   def initialize
     @cache = {
       book: import_books,
-      people: import_people,
-      rental: import_rentals
+      people: import_people
     }
     @terminate = false
+    @cache[:rental] = updat_rental
   end
 
   def entry(choice)

@@ -2,11 +2,11 @@ require './nameable'
 require './rentals'
 
 class Person < Nameable
-  attr_accessor :name, :age, :rentals, :parent_permission
-  attr_reader :id
+  attr_accessor :name, :age, :rentals, :parent_permission, :id
 
-  def initialize(age, name = 'Unknown', parent_permission = true) # rubocop:disable Style/OptionalBooleanParameter
+  def initialize(age, name = 'Unknown', parent_permission = true, id = -1) # rubocop:disable Style/OptionalBooleanParameter
     @id = Random.rand(1..1000)
+    @id = id unless id == -1
     super()
     @name = name
     @age = age

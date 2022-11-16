@@ -14,7 +14,7 @@ module Create
     age = gets.chomp
     puts 'Parent permission?[y/n]'
     permission = gets.chomp
-    @cache[:people] = [*@cache[:people], Student.new(age, '', name, permission.upcase == 'Y')]
+    @cache[:people] << Student.new(age, '', name, permission.upcase == 'Y')
   end
 
   def create_teacher
@@ -24,7 +24,7 @@ module Create
     age = gets.chomp
     puts 'Specialization?'
     specialization = gets.chomp
-    @cache[:people] = [*@cache[:people], Teacher.new(age, specialization, name)]
+    @cache[:people] << Teacher.new(age, specialization, name)
   end
 
   def create_person
@@ -43,8 +43,9 @@ module Create
     puts 'Date'
     date = gets.chomp
     begin
-      person = @cache[:people][book_index.to_i]
-      book = @cache[:book][person_index.to_i]
+      person = @cache[:people][person_index.to_i]
+
+      book = @cache[:book][book_index.to_i]
       @cache[:rental] = [*@cache[:rental], Rentals.new(date, book, person)]
     rescue StandardError => e
       puts "incorrect value #{e}"

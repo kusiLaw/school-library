@@ -11,10 +11,10 @@ module Storage
     people_store = 'storage/people.json'
     if File.exist?(people_store)
       JSON.parse(File.read(people_store)).map do |person|
-        if person['instance'] == 'teacher'
-          Teacher.new(person['age'], person['specialization'], person['name'])
+        if person['type'] == 'teacher'
+          Teacher.new(person['age'], person['specialization'], person['name'], person['id'])
         else
-          Student.new(person['age'], person['classroom'], person['name'], person['permission'])
+          Student.new(person['age'], person['classroom'], person['name'], person['permission'], person['id'])
         end
       end
     else
@@ -36,25 +36,33 @@ module Storage
   def import_rentals
     rental_store = 'storage/rentals.json'
     if File.exist? rental_store
-      JSON.parse(File.read(rental_store)).map do |rental|
-        date = rental['date']
-        person = identify_person(rental['person'])
-        book = identify_book(rental['book']['title'], rental['book']['author'])
-        Rentals.new(date, book, person)
+      rent_obj = JSON.parse(File.read(rental_store))
+      rent_obj[0].keys.map do |id| # get all keys
+        person = identify_person_object(id) # get person by keys
+        person_rents = rent_obj[0][id]['rent'] # rent from the rent json
+        person_rents.each do |rent|
+          date = rent['date']
+          book = identify_book_object(rent['title'], rent['author'])
+          Rentals.new(date, book[0], person[0])
+        end
       end
     else
       []
     end
   end
 
+  def updat_rental()
+    import_rentals
+  end
+
   def store_people
     people_catalogue = []
     @cache[:people].each do |person|
       if person.instance_of?(Teacher)
-        people_catalogue.push({ type: 'teacher', name: person.name, age: person.age,
+        people_catalogue.push({ type: 'teacher', id: person.id, name: person.name, age: person.age,
                                 specialization: person.specialization })
       else
-        people_catalogue.push({ type: 'student', name: person.name, age: person.age,
+        people_catalogue.push({ type: 'student', id: person.id, name: person.name, age: person.age,
                                 permission: person.parent_permission, classroom: person.classroom })
       end
     end
@@ -63,11 +71,21 @@ module Storage
 
   def store_rental
     rental_catalogue = []
-    @cache[:rental].each do |rental|
-      rental_catalogue.push({ date: rental.date,
-                              person: { name: rental.person.name, age: rental.person.age },
-                              book: { title: rental.book.title, author: rental.book.author } })
+    rental_object = {}
+    @cache[:people].each do |person|
+      next unless person.rentals.length.positive?
+
+      person_rent = person.rentals.map do |rental|
+        { title: rental.book.title, author: rental.book.author, date: rental.date }
+      end
+
+      rental_object[person.id] = {
+        person: { name: person.name, age: person.age },
+        rent: person_rent
+      }
     end
+
+    rental_catalogue.push(rental_object)
     File.write('storage/rentals.json', JSON.generate(rental_catalogue))
   end
 
@@ -85,19 +103,17 @@ module Storage
     store_books unless @cache[:book].empty?
     store_rental unless @cache[:rental].empty?
   end
-end
 
-# HELPER METHODS
-# -----Method to identify person who made a rental
-def identify_person(rental_person)
-  @cache[:people].find do |person|
-    person.name == rental_person['name'] && person.age == rental_person['age']
+  # HELPER METHODS
+  # -----Method to identify person who made a rental
+  def identify_person_object(id)
+    @cache[:people].select { |person| person.id.to_i == id.to_i }
   end
-end
 
-# -----Method to identify book rented
-def identify_book(title, author)
-  @cache[:book].find do |book|
-    book.title == title && book.author == author
+  # -----Method to identify book rented
+  def identify_book_object(title, author)
+    @cache[:book].select do |book|
+      book.title == title && book.author == author
+    end
   end
 end
