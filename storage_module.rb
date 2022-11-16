@@ -12,11 +12,14 @@ module Storage
     if File.exist?(people_store)
       JSON.parse(File.read(people_store)).map do |person|
         if person['type'] == 'teacher'
-          Teacher.new(person['age'], person['specialization'], person['name'], person['id'])
+
+          p Teacher.new(person['age'], person['specialization'], person['name'], person['id'])
         else
-          Student.new(person['age'], person['classroom'], person['name'], person['permission'], person['id'])
+
+          p Student.new(person['age'], person['classroom'], person['name'], person['permission'], person['id'])
         end
       end
+
     else
       []
     end
@@ -39,11 +42,12 @@ module Storage
       rent_obj = JSON.parse(File.read(rental_store))
       rent_obj[0].keys.map do |id| # get all keys
         person = identify_person_object(id) # get person by keys
+
         person_rents = rent_obj[0][id]['rent'] # rent from the rent json
         person_rents.each do |rent|
           date = rent['date']
           book = identify_book_object(rent['title'], rent['author'])
-          Rentals.new(date, book[0], person[0])
+          Rentals.new(date, book[0], person)
         end
       end
     else
@@ -107,7 +111,7 @@ module Storage
   # HELPER METHODS
   # -----Method to identify person who made a rental
   def identify_person_object(id)
-    @cache[:people].select { |person| person.id.to_i == id.to_i }
+    @cache[:people].find { |person| person.id.to_i == id.to_i }
   end
 
   # -----Method to identify book rented
