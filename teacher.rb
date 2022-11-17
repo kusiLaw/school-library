@@ -3,7 +3,7 @@ require './person'
 class Teacher < Person
   attr_accessor :specialization
 
-  def initialize(age, specialization, name = 'Unkown', id = -1)
+  def initialize(age, specialization, name = 'Unknown', id = -1)
     super(age, name, true, id)
     @specialization = specialization
   end
