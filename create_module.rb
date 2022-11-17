@@ -44,7 +44,6 @@ module Create
     date = gets.chomp
     begin
       person = @cache[:people][person_index.to_i]
-
       book = @cache[:book][book_index.to_i]
       @cache[:rental] = [*@cache[:rental], Rentals.new(date, book, person)]
     rescue StandardError => e
